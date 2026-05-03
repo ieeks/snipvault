@@ -181,6 +181,7 @@ function importJSON(file) {
       state.snippets   = data;
       state.selectedId = data[0]?.id ?? null;
       saveSnippets();
+      renderSidebar();
       renderList();
       renderDetail();
     } catch {
@@ -590,6 +591,7 @@ function renderDetail() {
     state.snippets.splice(idx + 1, 0, copy);
     state.selectedId = copy.id;
     saveSnippets();
+    renderSidebar();
     renderList();
     renderDetail();
   });
@@ -601,6 +603,7 @@ function renderDetail() {
       saveSnippets();
       const filtered = getFiltered();
       state.selectedId = filtered.length ? filtered[0].id : null;
+      renderSidebar();
       renderList();
       renderDetail();
     });
@@ -698,6 +701,7 @@ function commitModal(editSnip) {
 
   saveSnippets();
   closeModal();
+  renderSidebar();
   renderList();
   renderDetail();
 }

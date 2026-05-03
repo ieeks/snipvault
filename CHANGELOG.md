@@ -10,7 +10,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Planned
 
 **Quick wins**
-- Fix sidebar category counts — currently not updated after clear/add
 - Keyboard shortcut `⌘N` for new snippet
 
 **Medium**
@@ -25,6 +24,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Drag & drop — reorder snippets and categories
 - GitHub Gist sync — alternative to Firebase, no backend required
 - Browser extension — save a snippet directly from any webpage
+
+---
+
+## [0.8.0] — 2026-05-03
+
+### Fixed
+- **Sidebar category counts** — counts were stale after create, edit, duplicate, delete, and import; `renderSidebar()` is now called alongside `renderList()` in all five mutation paths
 
 ---
 
