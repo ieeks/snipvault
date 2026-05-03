@@ -8,9 +8,25 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Planned
-- Edit snippet in-place (without modal)
-- Tag-based filtering (click a tag in the detail panel)
+
+**Quick wins**
+- Tag-based filtering — click a tag in the detail panel to filter the list
+- Fix sidebar category counts — currently not updated after clear/add
+- Empty state — friendly "Start adding snippets" view instead of a blank panel
+- Keyboard shortcut `⌘N` for new snippet
+
+**Medium**
 - Firebase / Firestore backend — sync across devices, replace localStorage
+- Inline edit — edit code directly in the detail panel (contenteditable or CodeMirror CDN) instead of modal
+- Extended search — include code content, not just title + tags
+- Sort by last used / recently used snippets section
+- Copy-link — deep-link to a snippet via `?id=123` in the URL
+
+**Larger**
+- Mobile view — responsive redesign with bottom sheet (Design M-B from original wireframe)
+- Drag & drop — reorder snippets and categories
+- GitHub Gist sync — alternative to Firebase, no backend required
+- Browser extension — save a snippet directly from any webpage
 
 ---
 
