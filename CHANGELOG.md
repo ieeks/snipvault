@@ -9,24 +9,46 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Planned
 
-**Quick wins**
-- Tag-based filtering — click a tag in the detail panel to filter the list
-- Fix sidebar category counts — currently not updated after clear/add
-- Empty state — friendly "Start adding snippets" view instead of a blank panel
-- Keyboard shortcut `⌘N` for new snippet
-
 **Medium**
 - Firebase / Firestore backend — sync across devices, replace localStorage
 - Inline edit — edit code directly in the detail panel (contenteditable or CodeMirror CDN) instead of modal
 - Extended search — include code content, not just title + tags
 - Sort by last used / recently used snippets section
-- Copy-link — deep-link to a snippet via `?id=123` in the URL
 
 **Larger**
 - Mobile view — responsive redesign with bottom sheet (Design M-B from original wireframe)
 - Drag & drop — reorder snippets and categories
 - GitHub Gist sync — alternative to Firebase, no backend required
 - Browser extension — save a snippet directly from any webpage
+
+---
+
+## [0.10.0] — 2026-05-03
+
+### Added
+- **Copy-link / deep-link** — `?id=<snippetId>` in the URL selects the matching snippet on page load; `selectSnippet()` updates the URL via `history.replaceState` on every selection; a **⛓ Link** button in the detail footer copies the shareable URL to the clipboard
+
+---
+
+## [0.9.0] — 2026-05-03
+
+### Added
+- **⌘N / Ctrl+N keyboard shortcut** — opens the New Snippet modal from anywhere; ignored when the modal is already open
+
+---
+
+## [0.8.0] — 2026-05-03
+
+### Fixed
+- **Sidebar category counts** — counts were stale after create, edit, duplicate, delete, and import; `renderSidebar()` is now called alongside `renderList()` in all five mutation paths
+
+---
+
+## [0.7.0] — 2026-05-03
+
+### Added
+- **Tag-based filtering** — clicking any tag pill in the detail panel filters the snippet list to only snippets sharing that tag; an accent-coloured indicator bar appears at the top of the list with an `×` to clear the filter; switching categories resets the tag filter automatically
+- **Empty state** — when the vault contains no snippets the detail panel shows a friendly prompt with a "New snippet" button instead of a blank panel
 
 ---
 

@@ -181,6 +181,7 @@ function importJSON(file) {
       state.snippets   = data;
       state.selectedId = data[0]?.id ?? null;
       saveSnippets();
+      renderSidebar();
       renderList();
       renderDetail();
     } catch {
@@ -195,6 +196,7 @@ const state = {
   cat:        'all',
   search:     '',
   starred:    false,
+  tag:        null,
   selectedId: null,
   kbdIndex:   -1,
   snippets:   loadSnippets(),
@@ -307,6 +309,10 @@ document.addEventListener('keydown', e => {
     els.searchInput.focus();
     els.searchInput.select();
   }
+  if ((e.metaKey || e.ctrlKey) && e.key === 'n') {
+    e.preventDefault();
+    if (els.modalBackdrop.hidden) openModal();
+  }
   if (e.key === 'Escape') {
     if (!els.modalBackdrop.hidden) closeModal();
     if (!$('confirm-backdrop').hidden) $('confirm-backdrop').hidden = true;
@@ -353,6 +359,7 @@ els.catNav.addEventListener('click', e => {
   const item = e.target.closest('.sidebar-item');
   if (!item) return;
   state.cat      = item.dataset.cat;
+  state.tag      = null;
   state.kbdIndex = -1;
   renderSidebar();
   renderList();
@@ -395,7 +402,8 @@ function getFiltered() {
     const q           = state.search.toLowerCase();
     const matchSearch = !q || s.title.toLowerCase().includes(q) || s.tags.some(t => t.includes(q));
     const matchStar   = !state.starred || s.starred;
-    return matchCat && matchSearch && matchStar;
+    const matchTag    = !state.tag || s.tags.includes(state.tag);
+    return matchCat && matchSearch && matchStar && matchTag;
   });
 }
 
@@ -405,8 +413,23 @@ function renderList() {
   const container = els.snippetList;
   container.innerHTML = '';
 
+  if (state.tag) {
+    const bar = document.createElement('div');
+    bar.className = 'tag-filter-bar';
+    bar.innerHTML = `<span>Tag: <strong>${escHtml(state.tag)}</strong></span><button class="tag-filter-clear" aria-label="Clear tag filter">×</button>`;
+    bar.querySelector('.tag-filter-clear').addEventListener('click', () => {
+      state.tag = null;
+      state.kbdIndex = -1;
+      renderList();
+    });
+    container.appendChild(bar);
+  }
+
   if (filtered.length === 0) {
-    container.innerHTML = '<div class="snip-empty">No snippets found</div>';
+    const el = document.createElement('div');
+    el.className = 'snip-empty';
+    el.textContent = 'No snippets found';
+    container.appendChild(el);
     return;
   }
 
@@ -456,6 +479,7 @@ function renderList() {
 /* ── SELECT SNIPPET ────────────────────────────────────────── */
 function selectSnippet(id) {
   state.selectedId = id;
+  history.replaceState(null, '', id != null ? `?id=${id}` : location.pathname);
   renderList();
   renderDetail();
 }
@@ -466,11 +490,23 @@ function renderDetail() {
   const snip  = state.snippets.find(s => s.id === state.selectedId);
 
   if (!snip) {
-    panel.innerHTML = '<div class="detail-empty">Select a snippet</div>';
+    if (state.snippets.length === 0) {
+      panel.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">◈</div>
+          <div class="empty-title">Your vault is empty</div>
+          <div class="empty-desc">Save your first snippet and start building your personal code library.</div>
+          <button class="btn-primary" id="empty-add-btn">+ New snippet</button>
+        </div>
+      `;
+      $('empty-add-btn').addEventListener('click', () => openModal());
+    } else {
+      panel.innerHTML = '<div class="detail-empty">Select a snippet</div>';
+    }
     return;
   }
 
-  const tagsHTML  = snip.tags.map(t => `<span class="tag active">${escHtml(t)}</span>`).join('');
+  const tagsHTML  = snip.tags.map(t => `<span class="tag active tag-filter-btn" data-tag="${escHtml(t)}" title="Filter by tag">${escHtml(t)}</span>`).join('');
   const prismLang = PRISM_LANG[snip.lang] ?? '';
 
   panel.innerHTML = `
@@ -505,6 +541,7 @@ function renderDetail() {
     <div class="detail-footer">
       <button class="action-btn" id="edit-btn">Edit</button>
       <button class="action-btn" id="duplicate-btn">Duplicate</button>
+      <button class="action-btn" id="copylink-btn" title="Copy link to this snippet">⛓ Link</button>
       <div class="spacer"></div>
       <button class="action-btn danger" id="delete-btn">Delete</button>
     </div>
@@ -513,6 +550,15 @@ function renderDetail() {
   // Syntax highlighting
   const codeEl = panel.querySelector('code');
   if (prismLang && window.Prism) Prism.highlightElement(codeEl);
+
+  // Tag filter — clicking a tag in the detail panel filters the list
+  panel.querySelectorAll('.tag-filter-btn').forEach(tagEl => {
+    tagEl.addEventListener('click', () => {
+      state.tag = tagEl.dataset.tag;
+      state.kbdIndex = -1;
+      renderList();
+    });
+  });
 
   // Copy
   $('copy-btn').addEventListener('click', () => {
@@ -551,8 +597,19 @@ function renderDetail() {
     state.snippets.splice(idx + 1, 0, copy);
     state.selectedId = copy.id;
     saveSnippets();
+    renderSidebar();
     renderList();
     renderDetail();
+  });
+
+  // Copy link
+  $('copylink-btn').addEventListener('click', () => {
+    const url = `${location.origin}${location.pathname}?id=${snip.id}`;
+    navigator.clipboard.writeText(url).then(() => {
+      const btn = $('copylink-btn');
+      btn.textContent = '✓ Copied';
+      setTimeout(() => { if ($('copylink-btn')) btn.textContent = '⛓ Link'; }, 1800);
+    });
   });
 
   // Delete
@@ -562,6 +619,7 @@ function renderDetail() {
       saveSnippets();
       const filtered = getFiltered();
       state.selectedId = filtered.length ? filtered[0].id : null;
+      renderSidebar();
       renderList();
       renderDetail();
     });
@@ -659,6 +717,7 @@ function commitModal(editSnip) {
 
   saveSnippets();
   closeModal();
+  renderSidebar();
   renderList();
   renderDetail();
 }
@@ -707,7 +766,11 @@ function escHtml(str) {
 }
 
 /* ── INIT ──────────────────────────────────────────────────── */
-state.selectedId = state.snippets[0]?.id ?? null;
+(function () {
+  const urlId = new URLSearchParams(location.search).get('id');
+  const linked = urlId && state.snippets.find(s => s.id === Number(urlId));
+  state.selectedId = linked ? linked.id : (state.snippets[0]?.id ?? null);
+})();
 renderSidebar();
 renderList();
 renderDetail();
