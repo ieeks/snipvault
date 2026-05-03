@@ -5,13 +5,16 @@ A personal code snippet manager — local-first, no backend, no build step. Sing
 ## Features
 
 - **Three-column layout** — categories · list · detail (Layout A)
-- **Syntax highlighting** via [Prism.js](https://prismjs.com/) — tomorrow (dark) / solarizedlight (light), switches automatically
-- **Keyboard navigation** — `⌘K` focuses search, `↑`/`↓` navigates results, `Enter` selects
+- **Syntax highlighting** via [Prism.js](https://prismjs.com/) — One Dark (dark) / Solarized Light (light), switches automatically
+- **Keyboard navigation** — `⌘K` focuses search, `↑`/`↓` navigates results, `Enter` selects, `⌘N` opens new snippet modal
 - **Dark / Light mode** — FOUC-free init, persisted via `localStorage`
 - **Dynamic categories** — add from sidebar, auto-icon, persisted
 - **Snippet CRUD** — add, edit (pre-filled modal), duplicate, delete (custom confirm dialog)
-- **Star / Favourite** — filter to starred
+- **Tag-based filtering** — click any tag in the detail panel to filter the list; active tag shown as a dismissible bar; stacks with category and search filters
+- **Star / Favourite** — filter to starred only
 - **Copy to clipboard** — one-click, copy counter per snippet
+- **Copy link / deep-link** — `⛓ Link` button copies a `?id=` URL; opening that URL pre-selects the snippet
+- **Empty state** — friendly prompt with a "New snippet" button when the vault is empty
 - **localStorage persistence** — auto-saves on every mutation, survives reloads
 - **JSON Export / Import** — portable backup, works across browsers and devices
 - **Clear all data** — wipes everything for a clean deploy
@@ -41,12 +44,13 @@ CDN dependencies (no install):
 
 ## Keyboard Shortcuts
 
-| Key       | Action                         |
-|-----------|--------------------------------|
-| `⌘K`      | Focus search                   |
-| `↑` / `↓` | Navigate search results        |
-| `Enter`   | Select focused snippet         |
-| `Escape`  | Clear focus / close modal      |
+| Key        | Action                          |
+|------------|---------------------------------|
+| `⌘K`       | Focus search                    |
+| `⌘N`       | Open new snippet modal          |
+| `↑` / `↓`  | Navigate search results         |
+| `Enter`    | Select focused snippet          |
+| `Escape`   | Clear focus / close modal       |
 
 ## localStorage Keys
 

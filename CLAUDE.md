@@ -26,6 +26,7 @@ state = {
   cat:        String,    // active category filter ('all' or category name)
   search:     String,    // current search query
   starred:    Boolean,   // starred-only filter active
+  tag:        String|null, // active tag filter (null = off); set by clicking a tag in renderDetail
   selectedId: Number,    // id of the selected snippet (or null)
   kbdIndex:   Number,    // keyboard-focused row in search results (-1 = none)
   snippets:   Snippet[], // all snippets, mutable
@@ -47,7 +48,7 @@ Every mutation must call `saveSnippets()` or `saveCategories()` before re-render
 | `renderList()` | Rebuilds the snippet list from `getFiltered()` |
 | `renderDetail()` | Rebuilds the detail panel for `state.selectedId`; calls `Prism.highlightElement()` |
 | `getFiltered()` | Returns filtered + searched + starred snippets from `state.snippets` |
-| `selectSnippet(id)` | Sets `state.selectedId`, calls `renderList()` + `renderDetail()` |
+| `selectSnippet(id)` | Sets `state.selectedId`, updates `?id=` URL via `history.replaceState`, calls `renderList()` + `renderDetail()` |
 | `saveSnippets()` | Writes `state.snippets` to localStorage |
 | `saveCategories()` | Writes `state.categories` to localStorage |
 | `showConfirm(msg, cb)` | Custom confirm dialog (never use `window.confirm()`) |
@@ -63,6 +64,7 @@ Every mutation must call `saveSnippets()` or `saveCategories()` before re-render
 - **`$('id')`** is a shorthand for `document.getElementById`. Use it. Don't use `querySelector` unless selecting by class/attribute.
 - **After mutations** always call `saveSnippets()` / `saveCategories()`, then the relevant render functions. Forgetting `save*` is the most common bug.
 - **`state.kbdIndex`** must be reset to `-1` whenever the filtered list changes (search input, category switch, filter toggle) so keyboard focus doesn't land on the wrong row.
+- **`state.tag`** must be reset to `null` when switching categories (already done in the catNav click handler). Tag filter stacks with `cat`, `search`, and `starred` — all four are applied in `getFiltered()`.
 - **`[hidden]` attribute** works because the CSS reset includes `[hidden] { display: none !important }`. Don't remove that line.
 
 ---

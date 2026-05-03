@@ -9,9 +9,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Planned
 
-**Quick wins**
-- *(none remaining in quick wins)*
-
 **Medium**
 - Firebase / Firestore backend — sync across devices, replace localStorage
 - Inline edit — edit code directly in the detail panel (contenteditable or CodeMirror CDN) instead of modal
