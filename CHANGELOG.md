@@ -10,9 +10,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Planned
 
 **Quick wins**
-- Tag-based filtering — click a tag in the detail panel to filter the list
 - Fix sidebar category counts — currently not updated after clear/add
-- Empty state — friendly "Start adding snippets" view instead of a blank panel
 - Keyboard shortcut `⌘N` for new snippet
 
 **Medium**
@@ -27,6 +25,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Drag & drop — reorder snippets and categories
 - GitHub Gist sync — alternative to Firebase, no backend required
 - Browser extension — save a snippet directly from any webpage
+
+---
+
+## [0.7.0] — 2026-05-03
+
+### Added
+- **Tag-based filtering** — clicking any tag pill in the detail panel filters the snippet list to only snippets sharing that tag; an accent-coloured indicator bar appears at the top of the list with an `×` to clear the filter; switching categories resets the tag filter automatically
+- **Empty state** — when the vault contains no snippets the detail panel shows a friendly prompt with a "New snippet" button instead of a blank panel
 
 ---
 
