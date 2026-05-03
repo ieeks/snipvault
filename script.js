@@ -309,6 +309,10 @@ document.addEventListener('keydown', e => {
     els.searchInput.focus();
     els.searchInput.select();
   }
+  if ((e.metaKey || e.ctrlKey) && e.key === 'n') {
+    e.preventDefault();
+    if (els.modalBackdrop.hidden) openModal();
+  }
   if (e.key === 'Escape') {
     if (!els.modalBackdrop.hidden) closeModal();
     if (!$('confirm-backdrop').hidden) $('confirm-backdrop').hidden = true;

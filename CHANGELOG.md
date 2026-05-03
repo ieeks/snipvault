@@ -10,7 +10,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Planned
 
 **Quick wins**
-- Keyboard shortcut `⌘N` for new snippet
+- *(none remaining in quick wins)*
 
 **Medium**
 - Firebase / Firestore backend — sync across devices, replace localStorage
@@ -24,6 +24,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Drag & drop — reorder snippets and categories
 - GitHub Gist sync — alternative to Firebase, no backend required
 - Browser extension — save a snippet directly from any webpage
+
+---
+
+## [0.9.0] — 2026-05-03
+
+### Added
+- **⌘N / Ctrl+N keyboard shortcut** — opens the New Snippet modal from anywhere; ignored when the modal is already open
 
 ---
 
