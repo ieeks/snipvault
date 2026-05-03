@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SnipVault</title>
+  <script>
+    (function () {
+      var saved;
+      try { saved = localStorage.getItem('snipvault-theme'); } catch (e) {}
+      if (!saved) saved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', saved);
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
+  <!-- Prism.js theme — switches with dark/light mode -->
+  <link id="prism-theme" rel="stylesheet" href="" />
+  <script>
+    (function () {
+      var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+      var DARK_THEME  = 'https://cdn.jsdelivr.net/npm/prism-themes@1.9.0/themes/prism-one-dark.css';
+      var LIGHT_THEME = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-solarizedlight.min.css';
+      document.getElementById('prism-theme').href = dark ? DARK_THEME : LIGHT_THEME;
+    })();
+  </script>
+  <!-- disable Prism auto-run; we call highlightElement() manually -->
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="topbar-logo">
+      <div class="logo-mark">S</div>
+      <span class="logo-name">SnipVault</span>
+    </div>
+
+    <div class="topbar-search">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="search-input" placeholder="Search snippets…" autocomplete="off" spellcheck="false" />
+      <kbd class="search-kbd" id="search-kbd">⌘K</kbd>
+      <button class="search-clear" id="search-clear" hidden>×</button>
+    </div>
+
+    <div class="topbar-filters">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="starred">★ Starred</button>
+    </div>
+
+    <div class="topbar-right">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+        <span class="theme-icon"></span>
+        <div class="toggle-track">
+          <div class="toggle-knob"></div>
+        </div>
+      </button>
+    </div>
+  </header>
+
+  <!-- BODY -->
+  <div class="app-body">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-label">Categories</div>
+      <nav class="sidebar-nav" id="cat-nav">
+        <!-- rendered by JS -->
+      </nav>
+      <button class="add-cat-btn" id="add-cat-btn">+ Add category</button>
+      <div class="add-cat-form" id="add-cat-form" hidden>
+        <input id="add-cat-input" type="text" placeholder="Category name…" maxlength="24" />
+      </div>
+
+      <div class="sidebar-footer">
+        <button class="new-snippet-btn" id="new-snippet-btn">
+          <span>+</span>
+          New snippet
+        </button>
+        <div class="sidebar-io">
+          <button class="io-btn" id="export-btn" title="Export snippets as JSON">↓ Export</button>
+          <label class="io-btn" title="Import snippets from JSON">
+            ↑ Import
+            <input type="file" id="import-input" accept=".json" hidden />
+          </label>
+        </div>
+        <button class="io-btn clear-btn" id="clear-btn" title="Delete all snippets and categories">⚠ Clear all data</button>
+      </div>
+    </aside>
+
+    <!-- SNIPPET LIST -->
+    <div class="snippet-list" id="snippet-list">
+      <!-- populated by JS -->
+    </div>
+
+    <!-- DETAIL PANEL -->
+    <main class="detail-panel" id="detail-panel">
+      <div class="detail-empty">Select a snippet</div>
+    </main>
+
+  </div>
+
+  <!-- DELETE CONFIRM DIALOG -->
+  <div class="modal-backdrop" id="confirm-backdrop" hidden>
+    <div class="modal confirm-modal" role="alertdialog" aria-modal="true">
+      <div class="confirm-message" id="confirm-message"></div>
+      <div class="modal-actions">
+        <button class="action-btn" id="confirm-cancel">Cancel</button>
+        <button class="btn-danger" id="confirm-ok">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEW SNIPPET MODAL -->
+  <div class="modal-backdrop" id="modal-backdrop" hidden>
+    <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="New Snippet">
+      <div class="modal-title">New Snippet</div>
+      <div class="form-field">
+        <label>Title</label>
+        <input type="text" placeholder="Title…" />
+      </div>
+      <div class="form-field">
+        <label>Description</label>
+        <input type="text" placeholder="Short description…" />
+      </div>
+      <div class="form-field">
+        <label>Tags</label>
+        <input type="text" placeholder="api, auth, …" />
+      </div>
+      <div class="form-field">
+        <label>Category</label>
+        <input type="text" placeholder="API" />
+      </div>
+      <div class="form-field">
+        <label>Code</label>
+        <textarea placeholder="Paste your code here…" rows="5"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="action-btn" id="modal-cancel">Cancel</button>
+        <button class="btn-primary" id="modal-save">Save snippet</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-vbscript.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+# Changelog
+
+All notable changes to SnipVault are documented here.
+Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
+---
+
+## [Unreleased]
+
+### Planned
+- Edit snippet in-place (without modal)
+- Tag-based filtering (click a tag in the detail panel)
+- Firebase / Firestore backend — sync across devices, replace localStorage
+
+---
+
+## [0.6.0] — 2026-05-03
+
+### Fixed
+- **Syntax highlighting now works** — two root causes resolved:
+  - `prism-github.css` does not exist in `prism-themes`; correct name is `prism-ghcolors.css` (was causing 404 → no theme loaded at all)
+  - `color: var(--text-mid)` on `.code-block pre` was cascading into Prism token `<span>`s and suppressing token colors; moved to `code:not([class])` so only un-highlighted code (Excel, ABAP) gets the fallback color
+- **New Snippet button broken** — `openModal` was passed directly as event handler, so the `MouseEvent` was received as `editSnip`; wrapped in `() => openModal()`
+- **Custom delete confirmation dialog** — replaced `window.confirm()` with on-brand modal
+
+### Changed
+- Prism themes now use two separate CDNs (jsDelivr has One Dark, cdnjs has Solarized Light):
+  - Dark: `prism-one-dark.css` via jsDelivr
+  - Light: `prism-solarizedlight.min.css` via cdnjs
+
+---
+
+## [0.5.0] — 2026-05-03
+
+### Added
+- **Dynamic categories** — add new categories inline from the sidebar; auto-icon assigned from a pool; persisted to `localStorage` under `snipvault-categories`
+- **⚠ Clear all data** — wipes all snippets and categories from state and localStorage; intended for clearing demo data before a GitHub Pages deploy; uses custom confirm dialog
+- **Edit snippet** — Edit button opens modal pre-filled with all fields; saves in-place without changing the ID
+- **Duplicate snippet** — clones the snippet below the original with `(copy)` suffix; auto-selected
+
+### Changed
+- Sidebar category items are now rendered dynamically by `renderSidebar()` instead of being hardcoded in HTML
+- Category dropdown in the New / Edit modal now reads from `state.categories` instead of a static array
+- `loadSnippets()` now distinguishes between "key not set" (first visit → seed data) and "key is empty array" (user cleared data → stay empty)
+
+---
+
+## [0.4.0] — 2026-05-03
+
+### Added
+- **localStorage persistence** — snippets auto-save on every mutation; survive page reloads
+- **JSON Export** — downloads all snippets as `snipvault-YYYY-MM-DD.json`
+- **JSON Import** — loads snippets from a `.json` file; replaces current set
+- Export / Import buttons in sidebar footer
+
+---
+
+## [0.3.0] — 2026-05-03
+
+### Added
+- **Prism.js syntax highlighting** — `prism-tomorrow` (dark) / `prism-solarizedlight` (light); switches with theme toggle; replaces broken highlight.js integration
+- **Keyboard navigation** in search — `↑`/`↓` moves through filtered list, `Enter` selects, `Escape` clears
+- **Category dropdown** in "New Snippet" modal (replaces free-text input)
+- **Delete snippet** — custom confirm dialog (no browser `confirm()`), list updates automatically
+
+### Fixed
+- highlight.js integrity hash was causing silent script block → replaced with Prism.js
+- Star toggle in list no longer also triggered snippet selection
+
+---
+
+## [0.2.0] — 2026-05-03
+
+### Added
+- "New Snippet" modal with form fields
+- Save creates snippet, selects it immediately
+- Cancel and backdrop-click close the modal
+
+### Fixed
+- Modal opened automatically on load (`display: flex` overriding `[hidden]` attribute) → added `[hidden] { display: none !important }` to reset
+
+---
+
+## [0.1.0] — 2026-05-03
+
+### Added
+- Initial implementation from Claude Design handoff (Layout A)
+- Three-column layout: sidebar · snippet list · detail panel
+- Dark/light mode with FOUC-safe init script, persisted to `localStorage`
+- Search with `⌘K` shortcut
+- All / Starred filter
+- Copy to clipboard with usage counter
+- Star / unstar (synced between list and detail)
+- Sample data: API (JS), VBA, SAP, Excel, Python
+- Fonts: DM Sans + DM Mono
