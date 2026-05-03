@@ -17,13 +17,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Inline edit — edit code directly in the detail panel (contenteditable or CodeMirror CDN) instead of modal
 - Extended search — include code content, not just title + tags
 - Sort by last used / recently used snippets section
-- Copy-link — deep-link to a snippet via `?id=123` in the URL
 
 **Larger**
 - Mobile view — responsive redesign with bottom sheet (Design M-B from original wireframe)
 - Drag & drop — reorder snippets and categories
 - GitHub Gist sync — alternative to Firebase, no backend required
 - Browser extension — save a snippet directly from any webpage
+
+---
+
+## [0.10.0] — 2026-05-03
+
+### Added
+- **Copy-link / deep-link** — `?id=<snippetId>` in the URL selects the matching snippet on page load; `selectSnippet()` updates the URL via `history.replaceState` on every selection; a **⛓ Link** button in the detail footer copies the shareable URL to the clipboard
 
 ---
 
