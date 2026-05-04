@@ -12,13 +12,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 **Medium**
 - Firebase / Firestore backend — sync across devices, replace localStorage
 - Inline edit — edit code directly in the detail panel (contenteditable or CodeMirror CDN) instead of modal
-- Extended search — include code content, not just title + tags
 
 **Larger**
 - Mobile view — responsive redesign with bottom sheet (Design M-B from original wireframe)
 - Drag & drop — reorder snippets and categories
 - GitHub Gist sync — alternative to Firebase, no backend required
 - Browser extension — save a snippet directly from any webpage
+
+---
+
+## [0.12.0] — 2026-05-04
+
+### Changed
+- **Extended search** — search now matches against description and code content in addition to title and tags
 
 ---
 

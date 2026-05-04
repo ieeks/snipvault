@@ -411,7 +411,7 @@ function getFiltered() {
   const results = state.snippets.filter(s => {
     const matchCat    = state.cat === 'all' || s.cat === state.cat;
     const q           = state.search.toLowerCase();
-    const matchSearch = !q || s.title.toLowerCase().includes(q) || s.tags.some(t => t.includes(q));
+    const matchSearch = !q || s.title.toLowerCase().includes(q) || s.desc.toLowerCase().includes(q) || s.tags.some(t => t.includes(q)) || s.code.toLowerCase().includes(q);
     const matchStar   = !state.starred || s.starred;
     const matchTag    = !state.tag || s.tags.includes(state.tag);
     return matchCat && matchSearch && matchStar && matchTag;
