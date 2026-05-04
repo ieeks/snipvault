@@ -556,7 +556,7 @@ function renderDetail() {
     <div class="detail-footer">
       <button class="action-btn" id="edit-btn">Edit</button>
       <button class="action-btn" id="duplicate-btn">Duplicate</button>
-      <button class="action-btn" id="copylink-btn" title="Copy link to this snippet">⛓ Link</button>
+      <button class="action-btn" id="copylink-btn" title="Copy link to this snippet">Link</button>
       <div class="spacer"></div>
       <button class="action-btn danger" id="delete-btn">Delete</button>
     </div>
@@ -627,7 +627,7 @@ function renderDetail() {
     navigator.clipboard.writeText(url).then(() => {
       const btn = $('copylink-btn');
       btn.textContent = '✓ Copied';
-      setTimeout(() => { if ($('copylink-btn')) btn.textContent = '⛓ Link'; }, 1800);
+      setTimeout(() => { if ($('copylink-btn')) btn.textContent = 'Link'; }, 1800);
     });
   });
 
