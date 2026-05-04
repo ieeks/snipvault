@@ -216,6 +216,7 @@ const els = {
   searchKbd:     $('search-kbd'),
   searchClear:   $('search-clear'),
   catNav:        $('cat-nav'),
+  sidebar:       document.querySelector('.sidebar'),
   snippetList:   $('snippet-list'),
   detailPanel:   $('detail-panel'),
   newSnippetBtn: $('new-snippet-btn'),
@@ -497,16 +498,86 @@ function selectSnippet(id) {
   history.replaceState(null, '', id != null ? `?id=${id}` : location.pathname);
   renderList();
   renderDetail();
+  if (isMobile()) openSheet();
 }
+
+/* ── MOBILE SHEET ──────────────────────────────────────────── */
+function isMobile() {
+  return window.matchMedia('(max-width: 640px)').matches;
+}
+
+function openSheet() {
+  els.detailPanel.classList.add('sheet-open');
+  $('mobile-backdrop').classList.add('visible');
+}
+
+function closeSheet() {
+  els.detailPanel.style.transform = '';
+  els.detailPanel.classList.remove('sheet-open');
+  $('mobile-backdrop').style.opacity = '';
+  $('mobile-backdrop').classList.remove('visible');
+}
+
+function closeDrawer() {
+  els.sidebar.classList.remove('drawer-open');
+  if (!els.detailPanel.classList.contains('sheet-open')) {
+    $('mobile-backdrop').classList.remove('visible');
+  }
+}
+
+// Hamburger → sidebar drawer
+$('mobile-menu-btn').addEventListener('click', () => {
+  const open = els.sidebar.classList.toggle('drawer-open');
+  $('mobile-backdrop').classList.toggle('visible', open || els.detailPanel.classList.contains('sheet-open'));
+});
+
+// Backdrop click → close whichever overlay is open
+$('mobile-backdrop').addEventListener('click', () => {
+  if (els.sidebar.classList.contains('drawer-open')) closeDrawer();
+  else closeSheet();
+});
+
+// Swipe-to-close sheet — only triggered from the top 56px (handle area)
+(function () {
+  let startY = 0;
+  let dragging = false;
+
+  els.detailPanel.addEventListener('touchstart', e => {
+    const panelTop = els.detailPanel.getBoundingClientRect().top;
+    if (e.touches[0].clientY - panelTop > 56) return;
+    startY   = e.touches[0].clientY;
+    dragging = true;
+  }, { passive: true });
+
+  els.detailPanel.addEventListener('touchmove', e => {
+    if (!dragging) return;
+    const dy = e.touches[0].clientY - startY;
+    if (dy > 0) {
+      els.detailPanel.style.transform = `translateY(${dy}px)`;
+      $('mobile-backdrop').style.opacity = String(0.45 * (1 - dy / 300));
+    }
+  }, { passive: true });
+
+  els.detailPanel.addEventListener('touchend', e => {
+    if (!dragging) return;
+    dragging = false;
+    const dy = e.changedTouches[0].clientY - startY;
+    if (dy > 90) closeSheet();
+    else {
+      els.detailPanel.style.transform = '';
+      $('mobile-backdrop').style.opacity = '';
+    }
+  }, { passive: true });
+})();
 
 /* ── RENDER DETAIL ─────────────────────────────────────────── */
 function renderDetail() {
-  const panel = els.detailPanel;
+  const inner = $('detail-inner');
   const snip  = state.snippets.find(s => s.id === state.selectedId);
 
   if (!snip) {
     if (state.snippets.length === 0) {
-      panel.innerHTML = `
+      inner.innerHTML = `
         <div class="empty-state">
           <div class="empty-icon">◈</div>
           <div class="empty-title">Your vault is empty</div>
@@ -516,7 +587,7 @@ function renderDetail() {
       `;
       $('empty-add-btn').addEventListener('click', () => openModal());
     } else {
-      panel.innerHTML = '<div class="detail-empty">Select a snippet</div>';
+      inner.innerHTML = '<div class="detail-empty">Select a snippet</div>';
     }
     return;
   }
@@ -524,7 +595,7 @@ function renderDetail() {
   const tagsHTML  = snip.tags.map(t => `<span class="tag active tag-filter-btn" data-tag="${escHtml(t)}" title="Filter by tag">${escHtml(t)}</span>`).join('');
   const prismLang = PRISM_LANG[snip.lang] ?? '';
 
-  panel.innerHTML = `
+  inner.innerHTML = `
     <div class="detail-header">
       <div class="detail-title-row">
         <div>
@@ -563,11 +634,11 @@ function renderDetail() {
   `;
 
   // Syntax highlighting
-  const codeEl = panel.querySelector('code');
+  const codeEl = inner.querySelector('code');
   if (prismLang && window.Prism) Prism.highlightElement(codeEl);
 
   // Tag filter — clicking a tag in the detail panel filters the list
-  panel.querySelectorAll('.tag-filter-btn').forEach(tagEl => {
+  inner.querySelectorAll('.tag-filter-btn').forEach(tagEl => {
     tagEl.addEventListener('click', () => {
       state.tag = tagEl.dataset.tag;
       state.kbdIndex = -1;

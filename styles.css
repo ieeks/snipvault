@@ -891,13 +891,91 @@ code[class*="language-"] {
   background: var(--accent-bg);
 }
 
-/* ── RESPONSIVE ────────────────────────────────────────────── */
-@media (max-width: 700px) {
-  .sidebar { display: none; }
-  .snippet-list { width: 200px; }
+/* ── MOBILE-ONLY ELEMENTS (hidden on desktop) ──────────────── */
+.mobile-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--text-mid);
+  padding: 0 6px;
+  line-height: 1;
+  flex-shrink: 0;
+  border-radius: 5px;
+  align-items: center;
+}
+.mobile-menu-btn:hover { background: var(--hover); }
+
+.sheet-handle {
+  display: none;
+  width: 40px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 12px auto 4px;
+  flex-shrink: 0;
+  cursor: grab;
 }
 
-@media (max-width: 500px) {
-  .snippet-list { display: none; }
-  .detail-panel { flex: 1; }
+.mobile-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 35;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.mobile-backdrop.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Detail-inner wraps renderDetail output; fills panel below handle */
+#detail-inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ── RESPONSIVE ────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  /* Topbar */
+  .mobile-menu-btn { display: flex; }
+  .topbar-filters  { display: none; }
+  .topbar-search   { max-width: none; }
+
+  /* Sidebar → slide-in drawer */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
+  }
+  .sidebar.drawer-open { transform: translateX(0); }
+
+  /* Snippet list → full width */
+  .snippet-list { width: 100%; }
+
+  /* Detail panel → bottom sheet */
+  .detail-panel {
+    position: fixed;
+    inset: auto 0 0 0;
+    height: 90vh;
+    height: 90dvh;
+    border-radius: 14px 14px 0 0;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 40;
+    box-shadow: 0 -6px 30px rgba(0, 0, 0, 0.2);
+  }
+  .detail-panel.sheet-open { transform: translateY(0); }
+
+  /* Sheet handle visible */
+  .sheet-handle { display: block; }
 }

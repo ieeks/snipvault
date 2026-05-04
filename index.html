@@ -32,6 +32,8 @@
 
   <!-- TOP BAR -->
   <header class="topbar">
+    <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Categories">☰</button>
+
     <div class="topbar-logo">
       <div class="logo-mark">S</div>
       <span class="logo-name">SnipVault</span>
@@ -97,10 +99,14 @@
 
     <!-- DETAIL PANEL -->
     <main class="detail-panel" id="detail-panel">
-      <div class="detail-empty">Select a snippet</div>
+      <div class="sheet-handle"></div>
+      <div id="detail-inner"></div>
     </main>
 
   </div>
+
+  <!-- MOBILE BACKDROP -->
+  <div class="mobile-backdrop" id="mobile-backdrop"></div>
 
   <!-- DELETE CONFIRM DIALOG -->
   <div class="modal-backdrop" id="confirm-backdrop" hidden>

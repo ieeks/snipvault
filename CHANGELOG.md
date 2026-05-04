@@ -14,10 +14,18 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Inline edit — edit code directly in the detail panel (contenteditable or CodeMirror CDN) instead of modal
 
 **Larger**
-- Mobile view — responsive redesign with bottom sheet (Design M-B from original wireframe)
 - Drag & drop — reorder snippets and categories
 - GitHub Gist sync — alternative to Firebase, no backend required
 - Browser extension — save a snippet directly from any webpage
+
+---
+
+## [0.13.0] — 2026-05-04
+
+### Added
+- **Mobile view / bottom sheet** — on screens ≤640px the snippet list fills the full width; tapping a snippet slides a bottom sheet up from below; swipe down from the handle or tap the backdrop to dismiss
+- **Sidebar drawer** — on mobile the sidebar is hidden by default; the ☰ hamburger button in the topbar slides it in as a full-height overlay drawer
+- **Touch swipe-to-close** — dragging the sheet handle downward follows the finger and closes if released past 90px; backdrop fades with the drag distance
 
 ---
 
