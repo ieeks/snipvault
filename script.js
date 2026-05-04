@@ -244,7 +244,7 @@ function setTheme(theme) {
 }
 
 function updateThemeIcon() {
-  els.themeIcon.textContent = getTheme() === 'dark' ? '☀' : '☾';
+  els.themeIcon.textContent = getTheme() === 'dark' ? '◐' : '◑';
 }
 
 els.themeToggle.addEventListener('click', () => {
