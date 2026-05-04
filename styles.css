@@ -982,3 +982,53 @@ code[class*="language-"] {
   /* Sheet handle visible */
   .sheet-handle { display: block; }
 }
+
+/* ── WELCOME / ONBOARDING MODAL ────────────────────────────── */
+.welcome-modal {
+  width: 520px;
+}
+
+.welcome-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.welcome-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+
+.welcome-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.welcome-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 20px;
+  margin-bottom: 24px;
+}
+
+.welcome-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--text-mid);
+  line-height: 1.5;
+}
+
+.welcome-icon {
+  font-size: 15px;
+  color: var(--accent);
+  flex-shrink: 0;
+  width: 18px;
+  text-align: center;
+  margin-top: 1px;
+}

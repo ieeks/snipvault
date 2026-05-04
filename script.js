@@ -858,6 +858,23 @@ function escHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
+/* ── WELCOME ONBOARDING ────────────────────────────────────── */
+(function () {
+  const SEEN_KEY = 'snipvault-welcome';
+  if (localStorage.getItem(SEEN_KEY)) return;
+
+  const backdrop = $('welcome-backdrop');
+  backdrop.hidden = false;
+
+  function dismiss() {
+    backdrop.hidden = true;
+    try { localStorage.setItem(SEEN_KEY, '1'); } catch (e) {}
+  }
+
+  $('welcome-btn').addEventListener('click', dismiss);
+  backdrop.addEventListener('click', e => { if (e.target === backdrop) dismiss(); });
+})();
+
 /* ── INIT ──────────────────────────────────────────────────── */
 (function () {
   const urlId = new URLSearchParams(location.search).get('id');

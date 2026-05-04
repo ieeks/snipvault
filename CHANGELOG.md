@@ -14,12 +14,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Inline edit — edit code directly in the detail panel (contenteditable or CodeMirror CDN) instead of modal
 
 **Quick wins**
-- Desktop onboarding — guided first-use tour or tooltip overlay
+- *(none remaining)*
 
 **Larger**
 - Drag & drop — reorder snippets and categories
 - GitHub Gist sync — alternative to Firebase, no backend required
 - Browser extension — save a snippet directly from any webpage
+
+---
+
+## [0.15.0] — 2026-05-04
+
+### Added
+- **Welcome / onboarding modal** — shown once on first visit; 2-column feature grid covering search, shortcuts, categories, tags, sort, and copy-link; dismissed via button or backdrop click; `snipvault-welcome` flag in localStorage prevents repeat on subsequent visits
 
 ---
 

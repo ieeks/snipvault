@@ -150,6 +150,48 @@
     </div>
   </div>
 
+  <!-- ONBOARDING MODAL -->
+  <div class="modal-backdrop" id="welcome-backdrop" hidden>
+    <div class="modal welcome-modal" role="dialog" aria-modal="true" aria-label="Welcome to SnipVault">
+      <div class="welcome-head">
+        <div class="logo-mark" style="width:32px;height:32px;font-size:16px">S</div>
+        <div>
+          <div class="welcome-title">Welcome to SnipVault</div>
+          <div class="welcome-sub">Your personal code library — here's what you can do</div>
+        </div>
+      </div>
+      <div class="welcome-grid">
+        <div class="welcome-feature">
+          <span class="welcome-icon">⌕</span>
+          <div><strong>⌘K</strong> — search across titles, tags, descriptions and code</div>
+        </div>
+        <div class="welcome-feature">
+          <span class="welcome-icon">+</span>
+          <div><strong>⌘N</strong> — add a new snippet from anywhere</div>
+        </div>
+        <div class="welcome-feature">
+          <span class="welcome-icon">◈</span>
+          <div><strong>Categories</strong> — organise snippets; add your own from the sidebar</div>
+        </div>
+        <div class="welcome-feature">
+          <span class="welcome-icon">◎</span>
+          <div><strong>Tags</strong> — click any tag in the detail view to filter the list</div>
+        </div>
+        <div class="welcome-feature">
+          <span class="welcome-icon">⇅</span>
+          <div><strong>Recent</strong> — sort by last used; updates on every copy</div>
+        </div>
+        <div class="welcome-feature">
+          <span class="welcome-icon">⎘</span>
+          <div><strong>Copy + Link</strong> — one-click copy with a shareable deep-link</div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-primary" id="welcome-btn">Start exploring</button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-vbscript.min.js"></script>
