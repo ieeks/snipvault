@@ -127,9 +127,11 @@ function loadSnippets() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     // null = key never set → first visit → show sample data
-    if (raw !== null) return JSON.parse(raw);
+    if (raw !== null) {
+      return JSON.parse(raw).map(s => ({ lastUsedAt: 0, ...s }));
+    }
   } catch (e) {}
-  return JSON.parse(JSON.stringify(SNIPPETS));
+  return JSON.parse(JSON.stringify(SNIPPETS)).map(s => ({ lastUsedAt: 0, ...s }));
 }
 
 function loadCategories() {
@@ -197,6 +199,7 @@ const state = {
   search:     '',
   starred:    false,
   tag:        null,
+  sort:       'default',
   selectedId: null,
   kbdIndex:   -1,
   snippets:   loadSnippets(),
@@ -330,6 +333,14 @@ els.filterBtns.forEach(btn => {
   });
 });
 
+/* ── SORT BUTTON ───────────────────────────────────────────── */
+$('sort-btn').addEventListener('click', () => {
+  state.sort     = state.sort === 'recent' ? 'default' : 'recent';
+  state.kbdIndex = -1;
+  $('sort-btn').classList.toggle('active', state.sort === 'recent');
+  renderList();
+});
+
 /* ── SIDEBAR RENDER ────────────────────────────────────────── */
 function renderSidebar() {
   const nav = els.catNav;
@@ -397,7 +408,7 @@ $('add-cat-input').addEventListener('blur', commitAddCategory);
 
 /* ── FILTERING ─────────────────────────────────────────────── */
 function getFiltered() {
-  return state.snippets.filter(s => {
+  const results = state.snippets.filter(s => {
     const matchCat    = state.cat === 'all' || s.cat === state.cat;
     const q           = state.search.toLowerCase();
     const matchSearch = !q || s.title.toLowerCase().includes(q) || s.tags.some(t => t.includes(q));
@@ -405,6 +416,10 @@ function getFiltered() {
     const matchTag    = !state.tag || s.tags.includes(state.tag);
     return matchCat && matchSearch && matchStar && matchTag;
   });
+  if (state.sort === 'recent') {
+    results.sort((a, b) => (b.lastUsedAt || 0) - (a.lastUsedAt || 0));
+  }
+  return results;
 }
 
 /* ── RENDER LIST ───────────────────────────────────────────── */
@@ -567,6 +582,10 @@ function renderDetail() {
       btn.textContent = '✓ Copied';
       btn.classList.add('copied');
       snip.copies++;
+      snip.lastUsedAt = Date.now();
+      snip.lastUsed   = 'just now';
+      saveSnippets();
+      if (state.sort === 'recent') renderList();
       setTimeout(() => {
         if ($('copy-btn')) { btn.textContent = '⎘ Copy'; btn.classList.remove('copied'); }
       }, 1800);
@@ -695,21 +714,23 @@ function commitModal(editSnip) {
     snip.cat      = cat;
     snip.lang     = langForCat(cat);
     snip.tags     = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
-    snip.code     = code;
-    snip.lastUsed = 'just now';
+    snip.code       = code;
+    snip.lastUsed   = 'just now';
+    snip.lastUsedAt = Date.now();
   } else {
     // Create new
     const newSnip = {
-      id:       Date.now(),
+      id:         Date.now(),
       title,
-      desc:     desc || '',
+      desc:       desc || '',
       cat,
-      tags:     tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [],
-      starred:  false,
-      lang:     langForCat(cat),
-      lastUsed: 'just now',
-      copies:   0,
-      code:     code || '',
+      tags:       tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [],
+      starred:    false,
+      lang:       langForCat(cat),
+      lastUsed:   'just now',
+      lastUsedAt: Date.now(),
+      copies:     0,
+      code:       code || '',
     };
     state.snippets.unshift(newSnip);
     state.selectedId = newSnip.id;

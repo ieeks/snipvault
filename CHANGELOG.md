@@ -13,13 +13,22 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Firebase / Firestore backend — sync across devices, replace localStorage
 - Inline edit — edit code directly in the detail panel (contenteditable or CodeMirror CDN) instead of modal
 - Extended search — include code content, not just title + tags
-- Sort by last used / recently used snippets section
 
 **Larger**
 - Mobile view — responsive redesign with bottom sheet (Design M-B from original wireframe)
 - Drag & drop — reorder snippets and categories
 - GitHub Gist sync — alternative to Firebase, no backend required
 - Browser extension — save a snippet directly from any webpage
+
+---
+
+## [0.11.0] — 2026-05-04
+
+### Added
+- **Sort by last used** — `↕ Recent` toggle button in the topbar sorts the snippet list by most recently copied/edited; each snippet gains a `lastUsedAt` timestamp updated on copy and save; toggling back restores insertion order
+
+### Fixed
+- **Copy counter not persisted** — `snip.copies` was incremented in memory but `saveSnippets()` was never called in the copy handler; now saved alongside `lastUsedAt` on every copy
 
 ---
 
