@@ -944,9 +944,12 @@ code[class*="language-"] {
 /* ── RESPONSIVE ────────────────────────────────────────────── */
 @media (max-width: 640px) {
   /* Topbar */
-  .mobile-menu-btn { display: flex; }
-  .topbar-filters  { display: none; }
-  .topbar-search   { max-width: none; }
+  .mobile-menu-btn  { display: flex; }
+  .topbar-filters   { display: none; }
+  .topbar-search    { max-width: none; }
+  .topbar-right     { margin-left: 0; }
+  .toggle-track     { display: none; }
+  .theme-toggle     { padding: 4px 6px; gap: 0; }
 
   /* Sidebar → slide-in drawer */
   .sidebar {

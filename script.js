@@ -373,6 +373,7 @@ els.catNav.addEventListener('click', e => {
   state.cat      = item.dataset.cat;
   state.tag      = null;
   state.kbdIndex = -1;
+  if (isMobile()) closeDrawer();
   renderSidebar();
   renderList();
 });
