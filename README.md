@@ -6,15 +6,18 @@ A personal code snippet manager — local-first, no backend, no build step. Sing
 
 - **Three-column layout** — categories · list · detail (Layout A)
 - **Syntax highlighting** via [Prism.js](https://prismjs.com/) — One Dark (dark) / Solarized Light (light), switches automatically
-- **Keyboard navigation** — `⌘K` focuses search, `↑`/`↓` navigates results, `Enter` selects, `⌘N` opens new snippet modal
-- **Dark / Light mode** — FOUC-free init, persisted via `localStorage`
+- **Keyboard navigation** — `⌘K` focuses search, `⌘N` opens new snippet, `↑`/`↓` navigate results, `Enter` selects
+- **Dark / Light mode** — FOUC-free init, persisted via `localStorage`; toggle shows ◐/◑ geometric icons
 - **Dynamic categories** — add from sidebar, auto-icon, persisted
 - **Snippet CRUD** — add, edit (pre-filled modal), duplicate, delete (custom confirm dialog)
-- **Tag-based filtering** — click any tag in the detail panel to filter the list; active tag shown as a dismissible bar; stacks with category and search filters
+- **Tag-based filtering** — click any tag in the detail panel to filter the list; active tag shown as a dismissible bar; stacks with category, search, and starred filters
 - **Star / Favourite** — filter to starred only
-- **Copy to clipboard** — one-click, copy counter per snippet
-- **Copy link / deep-link** — `⛓ Link` button copies a `?id=` URL; opening that URL pre-selects the snippet
+- **Sort by last used** — `⇅ Recent` toggle sorts list by most recently copied/edited; `lastUsedAt` timestamp updated on every copy
+- **Copy to clipboard** — one-click, copy counter per snippet (persisted)
+- **Copy link / deep-link** — `Link` button copies a `?id=` URL; opening that URL pre-selects the snippet
+- **Extended search** — matches title, description, tags, and code content
 - **Empty state** — friendly prompt with a "New snippet" button when the vault is empty
+- **Mobile view** — on screens ≤640px the snippet list fills the full width; tapping a snippet slides a bottom sheet up from below; swipe the handle down or tap the backdrop to dismiss; sidebar accessible via ☰ hamburger button
 - **localStorage persistence** — auto-saves on every mutation, survives reloads
 - **JSON Export / Import** — portable backup, works across browsers and devices
 - **Clear all data** — wipes everything for a clean deploy
@@ -23,8 +26,8 @@ A personal code snippet manager — local-first, no backend, no build step. Sing
 
 ```
 index.html   — structure
-styles.css   — design tokens, layout, components, dark mode, Prism overrides
-script.js    — state, rendering, filtering, keyboard nav, modal, persistence
+styles.css   — design tokens, layout, components, dark mode, Prism overrides, mobile
+script.js    — state, rendering, filtering, keyboard nav, modal, persistence, mobile sheet
 ```
 
 CDN dependencies (no install):

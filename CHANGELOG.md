@@ -13,10 +13,24 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Firebase / Firestore backend — sync across devices, replace localStorage
 - Inline edit — edit code directly in the detail panel (contenteditable or CodeMirror CDN) instead of modal
 
+**Quick wins**
+- Desktop onboarding — guided first-use tour or tooltip overlay
+
 **Larger**
 - Drag & drop — reorder snippets and categories
 - GitHub Gist sync — alternative to Firebase, no backend required
 - Browser extension — save a snippet directly from any webpage
+
+---
+
+## [0.14.0] — 2026-05-04
+
+### Fixed
+- **Mobile drawer auto-closes** after selecting a category — previously required tapping the backdrop
+- **Theme toggle no longer clipped** on mobile — toggle track hidden on small screens, icon only
+
+### Changed
+- **Theme toggle icon** — ☀/☾ replaced with ◐/◑ geometric half-circles, consistent with the app's Unicode vocabulary
 
 ---
 
