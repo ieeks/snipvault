@@ -679,6 +679,38 @@ function getFiltered() {
   return results;
 }
 
+/* ── HOVER PREVIEW ─────────────────────────────────────────── */
+let previewTimer = null;
+
+function showPreview(snip, rowEl) {
+  if (isMobile() || snip.id === state.selectedId) return;
+  clearTimeout(previewTimer);
+  previewTimer = setTimeout(() => {
+    const preview   = $('snippet-preview');
+    const listRect  = els.snippetList.getBoundingClientRect();
+    const rowRect   = rowEl.getBoundingClientRect();
+    const prismLang = PRISM_LANG[snip.lang] ?? '';
+    preview.innerHTML = `
+      <div class="preview-title">${escHtml(snip.title)}</div>
+      <pre class="preview-code"><code class="${prismLang ? `language-${prismLang}` : ''}">${escHtml(snip.code)}</code></pre>
+    `;
+    const codeEl = preview.querySelector('code');
+    if (prismLang && window.Prism) Prism.highlightElement(codeEl);
+    const top = Math.min(rowRect.top, window.innerHeight - 300);
+    preview.style.top  = `${Math.max(8, top)}px`;
+    preview.style.left = `${listRect.right + 8}px`;
+    preview.hidden = false;
+  }, 180);
+}
+
+function hidePreview() {
+  clearTimeout(previewTimer);
+  $('snippet-preview').hidden = true;
+}
+
+/* ── DRAG & DROP ───────────────────────────────────────────── */
+let dragSrcId = null;
+
 /* ── RENDER LIST ───────────────────────────────────────────── */
 function renderList() {
   const filtered  = getFiltered();
@@ -743,6 +775,42 @@ function renderList() {
       }
       selectSnippet(s.id);
     });
+
+    // Hover preview
+    div.addEventListener('mouseenter', () => showPreview(s, div));
+    div.addEventListener('mouseleave', hidePreview);
+
+    // Drag & drop (only in default sort, no active search/filter)
+    if (state.sort === 'default') {
+      div.draggable = true;
+      div.addEventListener('dragstart', e => {
+        dragSrcId = s.id;
+        e.dataTransfer.effectAllowed = 'move';
+        setTimeout(() => div.classList.add('dragging'), 0);
+      });
+      div.addEventListener('dragend', () => {
+        div.classList.remove('dragging');
+        container.querySelectorAll('.drop-target').forEach(el => el.classList.remove('drop-target'));
+        dragSrcId = null;
+      });
+      div.addEventListener('dragover', e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        container.querySelectorAll('.drop-target').forEach(el => el.classList.remove('drop-target'));
+        if (dragSrcId !== s.id) div.classList.add('drop-target');
+      });
+      div.addEventListener('drop', e => {
+        e.preventDefault();
+        if (!dragSrcId || dragSrcId === s.id) return;
+        const srcIdx = state.snippets.findIndex(x => x.id === dragSrcId);
+        const dstIdx = state.snippets.findIndex(x => x.id === s.id);
+        if (srcIdx < 0 || dstIdx < 0) return;
+        const [moved] = state.snippets.splice(srcIdx, 1);
+        state.snippets.splice(dstIdx, 0, moved);
+        saveSnippets();
+        renderList();
+      });
+    }
 
     container.appendChild(div);
   });
@@ -876,6 +944,7 @@ function renderDetail() {
       <div class="code-lang">${escHtml(snip.lang)}</div>
       <div class="code-block">
         <button class="copy-btn" id="copy-btn">⎘ Copy</button>
+        <button class="edit-inline-btn" id="edit-inline-btn" title="Inline bearbeiten">✎</button>
         <pre><code class="${prismLang ? `language-${prismLang}` : ''}">${escHtml(snip.code)}</code></pre>
       </div>
     </div>
@@ -927,7 +996,33 @@ function renderDetail() {
     renderDetail();
   });
 
-  // Edit
+  // Inline edit
+  $('edit-inline-btn').addEventListener('click', () => {
+    const block    = inner.querySelector('.code-block');
+    const textarea = document.createElement('textarea');
+    textarea.className = 'inline-code-editor';
+    textarea.value     = snip.code;
+    const actions = document.createElement('div');
+    actions.className = 'inline-edit-actions';
+    actions.innerHTML = `
+      <button class="action-btn" id="inline-cancel">Abbrechen</button>
+      <button class="btn-primary" id="inline-save">Speichern</button>
+    `;
+    block.innerHTML = '';
+    block.appendChild(textarea);
+    block.appendChild(actions);
+    textarea.focus();
+    $('inline-cancel').addEventListener('click', renderDetail);
+    $('inline-save').addEventListener('click', () => {
+      snip.code       = textarea.value;
+      snip.lastUsed   = 'just now';
+      snip.lastUsedAt = Date.now();
+      saveSnippets();
+      renderDetail();
+    });
+  });
+
+  // Edit (modal)
   $('edit-btn').addEventListener('click', () => openModal(snip));
 
   // Duplicate
