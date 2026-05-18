@@ -123,6 +123,10 @@ const STORAGE_KEY      = 'snipvault-snippets';
 const STORAGE_KEY_CATS = 'snipvault-categories';
 const CAT_ICONS        = ['◉', '◈', '◎', '⬡', '⬢', '◆', '▦', '▣', '◐', '◑', '◒', '◓', '⬟', '⬠'];
 
+const GIST_TOKEN_KEY = 'snipvault-gist-token';
+const GIST_ID_KEY    = 'snipvault-gist-id';
+const GIST_FILENAME  = 'snipvault.json';
+
 function loadSnippets() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -144,10 +148,12 @@ function loadCategories() {
 
 function saveSnippets() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state.snippets)); } catch (e) {}
+  gistPush();
 }
 
 function saveCategories() {
   try { localStorage.setItem(STORAGE_KEY_CATS, JSON.stringify(state.categories)); } catch (e) {}
+  gistPush();
 }
 
 function clearAllData() {
@@ -191,6 +197,186 @@ function importJSON(file) {
     }
   };
   reader.readAsText(file);
+}
+
+/* ── GIST SYNC ─────────────────────────────────────────────── */
+const gist = {
+  token:     localStorage.getItem(GIST_TOKEN_KEY) || '',
+  id:        localStorage.getItem(GIST_ID_KEY)    || '',
+  status:    'idle',   // 'idle' | 'syncing' | 'ok' | 'error'
+  lastSync:  0,
+  pushTimer: null,
+};
+
+function renderGistStatus() {
+  const el = $('gist-section');
+  if (!el) return;
+
+  if (!gist.token) {
+    el.innerHTML = `
+      <button class="gist-connect-btn" id="gist-connect-btn">⟳ Gist Sync</button>
+      <div class="gist-token-form" id="gist-token-form" hidden>
+        <input id="gist-token-input" type="password" placeholder="GitHub token (gist scope)…" autocomplete="off" spellcheck="false" />
+        <div class="gist-form-actions">
+          <button class="action-btn" id="gist-cancel-btn">Cancel</button>
+          <button class="btn-primary" id="gist-save-btn">Connect</button>
+        </div>
+      </div>
+    `;
+    $('gist-connect-btn').addEventListener('click', () => {
+      $('gist-token-form').hidden = false;
+      $('gist-connect-btn').hidden = true;
+      $('gist-token-input').focus();
+    });
+    $('gist-cancel-btn').addEventListener('click', () => {
+      $('gist-token-form').hidden = true;
+      $('gist-connect-btn').hidden = false;
+    });
+    $('gist-save-btn').addEventListener('click', async () => {
+      const token = $('gist-token-input').value.trim();
+      if (!token) return;
+      $('gist-save-btn').textContent = 'Connecting…';
+      $('gist-save-btn').disabled = true;
+      const result = await gistConnect(token);
+      if (result === 'invalid_token') {
+        $('gist-save-btn').textContent = 'Connect';
+        $('gist-save-btn').disabled = false;
+        $('gist-token-input').style.borderColor = '#dc2626';
+        $('gist-token-input').value = '';
+        $('gist-token-input').placeholder = 'Invalid token — try again';
+      }
+    });
+    return;
+  }
+
+  const syncLabel = gist.status === 'syncing' ? '⟳ Syncing…'
+    : gist.status === 'error'   ? '⚠ Sync error'
+    : gist.lastSync             ? `◉ ${relTime(gist.lastSync)}`
+    : '◉ Connected';
+
+  el.innerHTML = `
+    <div class="gist-status-row">
+      <span class="gist-status-dot ${escHtml(gist.status)}">${syncLabel}</span>
+      <button class="gist-disconnect-btn" id="gist-disconnect-btn" title="Disconnect Gist Sync">×</button>
+    </div>
+  `;
+  $('gist-disconnect-btn').addEventListener('click', () => {
+    showConfirm('Disconnect Gist Sync? Your local snippets will not be deleted.', () => {
+      gist.token = ''; gist.id = ''; gist.status = 'idle'; gist.lastSync = 0;
+      localStorage.removeItem(GIST_TOKEN_KEY);
+      localStorage.removeItem(GIST_ID_KEY);
+      renderGistStatus();
+    });
+  });
+}
+
+function relTime(ts) {
+  const d = Math.floor((Date.now() - ts) / 1000);
+  if (d < 10)   return 'just now';
+  if (d < 60)   return `${d}s ago`;
+  if (d < 3600) return `${Math.floor(d / 60)}m ago`;
+  return `${Math.floor(d / 3600)}h ago`;
+}
+
+function gistPush() {
+  if (!gist.token) return;
+  clearTimeout(gist.pushTimer);
+  gist.pushTimer = setTimeout(_gistPushNow, 600);
+}
+
+async function _gistPushNow() {
+  if (!gist.token) return;
+  gist.status = 'syncing';
+  renderGistStatus();
+  const content = JSON.stringify({ snippets: state.snippets, categories: state.categories }, null, 2);
+  const headers = { Authorization: `token ${gist.token}`, 'Content-Type': 'application/json' };
+  try {
+    let res;
+    if (gist.id) {
+      res = await fetch(`https://api.github.com/gists/${gist.id}`, {
+        method: 'PATCH', headers,
+        body: JSON.stringify({ files: { [GIST_FILENAME]: { content } } }),
+      });
+    } else {
+      res = await fetch('https://api.github.com/gists', {
+        method: 'POST', headers,
+        body: JSON.stringify({ description: 'SnipVault backup', public: false, files: { [GIST_FILENAME]: { content } } }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        gist.id = data.id;
+        localStorage.setItem(GIST_ID_KEY, gist.id);
+      }
+    }
+    gist.status   = res.ok ? 'ok' : 'error';
+    if (res.ok) gist.lastSync = Date.now();
+  } catch (e) {
+    gist.status = 'error';
+  }
+  renderGistStatus();
+}
+
+async function gistPull() {
+  if (!gist.token || !gist.id) return;
+  gist.status = 'syncing';
+  renderGistStatus();
+  try {
+    const res = await fetch(`https://api.github.com/gists/${gist.id}`, {
+      headers: { Authorization: `token ${gist.token}` },
+    });
+    if (!res.ok) { gist.status = 'error'; renderGistStatus(); return; }
+    const data    = await res.json();
+    const content = data.files[GIST_FILENAME]?.content;
+    if (!content) { gist.status = 'error'; renderGistStatus(); return; }
+    const parsed  = JSON.parse(content);
+    if (Array.isArray(parsed.snippets)) {
+      state.snippets = parsed.snippets.map(s => ({ lastUsedAt: 0, ...s }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.snippets));
+    }
+    if (Array.isArray(parsed.categories)) {
+      state.categories = parsed.categories;
+      localStorage.setItem(STORAGE_KEY_CATS, JSON.stringify(state.categories));
+    }
+    gist.status   = 'ok';
+    gist.lastSync = Date.now();
+    const urlId  = new URLSearchParams(location.search).get('id');
+    const linked = urlId && state.snippets.find(s => s.id === Number(urlId));
+    state.selectedId = linked ? linked.id : (state.snippets[0]?.id ?? null);
+    renderSidebar();
+    renderList();
+    renderDetail();
+  } catch (e) {
+    gist.status = 'error';
+  }
+  renderGistStatus();
+}
+
+async function gistConnect(token) {
+  const authRes = await fetch('https://api.github.com/user', {
+    headers: { Authorization: `token ${token}` },
+  });
+  if (!authRes.ok) return 'invalid_token';
+
+  const listRes = await fetch('https://api.github.com/gists?per_page=100', {
+    headers: { Authorization: `token ${token}` },
+  });
+  if (listRes.ok) {
+    const gists    = await listRes.json();
+    const existing = gists.find(g => g.files && g.files[GIST_FILENAME]);
+    if (existing) {
+      gist.token = token;
+      gist.id    = existing.id;
+      localStorage.setItem(GIST_TOKEN_KEY, token);
+      localStorage.setItem(GIST_ID_KEY, existing.id);
+      await gistPull();
+      return 'connected_existing';
+    }
+  }
+
+  gist.token = token;
+  localStorage.setItem(GIST_TOKEN_KEY, token);
+  await _gistPushNow();
+  return 'connected_new';
 }
 
 /* ── STATE ─────────────────────────────────────────────────── */
@@ -884,3 +1070,5 @@ function escHtml(str) {
 renderSidebar();
 renderList();
 renderDetail();
+renderGistStatus();
+if (gist.token && gist.id) gistPull();

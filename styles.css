@@ -1032,3 +1032,77 @@ code[class*="language-"] {
   text-align: center;
   margin-top: 1px;
 }
+
+/* ── GIST SYNC ─────────────────────────────────────────────── */
+#gist-section {
+  margin-top: 6px;
+}
+
+.gist-connect-btn {
+  width: 100%;
+  padding: 5px 6px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-family: 'DM Sans', system-ui;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.1s, color 0.1s;
+}
+.gist-connect-btn:hover { background: var(--hover); color: var(--text-mid); }
+
+.gist-status-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 2px;
+}
+
+.gist-status-dot {
+  flex: 1;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.gist-status-dot.ok      { color: var(--accent-text); }
+.gist-status-dot.error   { color: #dc2626; }
+.gist-status-dot.syncing { color: var(--text-muted); }
+
+.gist-disconnect-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 15px;
+  padding: 0 2px;
+  line-height: 1;
+  opacity: 0.5;
+  transition: opacity 0.1s;
+}
+.gist-disconnect-btn:hover { opacity: 1; }
+
+.gist-token-form {
+  margin-top: 5px;
+}
+
+.gist-token-form input {
+  width: 100%;
+  padding: 5px 8px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  outline: none;
+  margin-bottom: 5px;
+  transition: border-color 0.15s;
+}
+.gist-token-form input:focus { border-color: var(--accent); }
+
+.gist-form-actions {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+}
