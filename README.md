@@ -19,6 +19,7 @@ A personal code snippet manager — local-first, no backend, no build step. Sing
 - **Empty state** — friendly prompt with a "New snippet" button when the vault is empty
 - **Mobile view** — on screens ≤640px the snippet list fills the full width; tapping a snippet slides a bottom sheet up from below; swipe the handle down or tap the backdrop to dismiss; sidebar accessible via ☰ hamburger button
 - **localStorage persistence** — auto-saves on every mutation, survives reloads
+- **GitHub Gist Sync** — enter a GitHub PAT (gist scope) once; snippets and categories sync automatically across all devices via a private Gist; status indicator shows last sync time
 - **JSON Export / Import** — portable backup, works across browsers and devices
 - **Clear all data** — wipes everything for a clean deploy
 
@@ -57,11 +58,14 @@ CDN dependencies (no install):
 
 ## localStorage Keys
 
-| Key                    | Contains                        |
-|------------------------|---------------------------------|
-| `snipvault-snippets`   | Array of snippet objects        |
-| `snipvault-categories` | Array of `{name, icon}` objects |
-| `snipvault-theme`      | `"dark"` or `"light"`           |
+| Key                      | Contains                                      |
+|--------------------------|-----------------------------------------------|
+| `snipvault-snippets`     | Array of snippet objects                      |
+| `snipvault-categories`   | Array of `{name, icon}` objects               |
+| `snipvault-theme`        | `"dark"` or `"light"`                         |
+| `snipvault-gist-token`   | GitHub PAT for Gist Sync (if connected)       |
+| `snipvault-gist-id`      | ID of the linked Gist (if connected)          |
+| `snipvault-welcome`      | `"1"` once onboarding modal has been seen     |
 
 First visit with no localStorage data → sample snippets and default categories are loaded as seed.
 

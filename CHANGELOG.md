@@ -10,16 +10,25 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Planned
 
 **Medium**
-- Firebase / Firestore backend — sync across devices, replace localStorage
 - Inline edit — edit code directly in the detail panel (contenteditable or CodeMirror CDN) instead of modal
-
-**Quick wins**
-- *(none remaining)*
 
 **Larger**
 - Drag & drop — reorder snippets and categories
-- GitHub Gist sync — alternative to Firebase, no backend required
 - Browser extension — save a snippet directly from any webpage
+
+---
+
+## [0.17.0] — 2026-05-18
+
+### Fixed
+- **Sidebar footer scrollable** — added `overflow-y: auto` to `.sidebar-footer` so the Gist Sync button is never clipped on short viewports
+
+---
+
+## [0.16.0] — 2026-05-18
+
+### Added
+- **GitHub Gist Sync** — enter a GitHub Personal Access Token (gist scope) once in the sidebar footer; snippets and categories are automatically pushed to a private Gist on every mutation (debounced 600ms) and pulled on every page load; existing `snipvault.json` Gist is detected on first connect so no duplicate is created; status indicator shows last sync time, syncing state, and errors; disconnect option wipes token/id from localStorage only
 
 ---
 

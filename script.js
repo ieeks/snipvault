@@ -529,8 +529,10 @@ $('sort-btn').addEventListener('click', () => {
 });
 
 /* ── SIDEBAR RENDER ────────────────────────────────────────── */
+let editingCat = null;
+
 function renderSidebar() {
-  const nav = els.catNav;
+  const nav      = els.catNav;
   const allCount = state.snippets.length;
 
   nav.innerHTML = `
@@ -542,18 +544,85 @@ function renderSidebar() {
     ${state.categories.map(c => {
       const count  = state.snippets.filter(s => s.cat === c.name).length;
       const active = state.cat === c.name;
+
+      if (editingCat === c.name) {
+        return `
+          <div class="sidebar-item-edit">
+            <input class="cat-rename-input" data-cat="${escHtml(c.name)}" value="${escHtml(c.name)}" maxlength="24" />
+          </div>`;
+      }
+
       return `
         <div class="sidebar-item${active ? ' active' : ''}" data-cat="${escHtml(c.name)}">
           <span class="cat-icon">${escHtml(c.icon)}</span>
           <span class="cat-label">${escHtml(c.name)}</span>
           <span class="cat-count">${count}</span>
+          <span class="cat-actions">
+            <button class="cat-action-btn" data-action="rename" data-cat="${escHtml(c.name)}" title="Umbenennen">✎</button>
+            <button class="cat-action-btn" data-action="delete" data-cat="${escHtml(c.name)}" title="Löschen">×</button>
+          </span>
         </div>`;
     }).join('')}
   `;
+
+  // Inline rename handlers
+  nav.querySelectorAll('.cat-rename-input').forEach(input => {
+    input.focus();
+    input.select();
+    let committed = false;
+    const commit = () => {
+      if (committed) return;
+      committed    = true;
+      editingCat   = null;
+      const oldName = input.dataset.cat;
+      const newName = input.value.trim();
+      if (!newName || newName === oldName) { renderSidebar(); return; }
+      if (state.categories.some(c => c.name.toLowerCase() === newName.toLowerCase())) { renderSidebar(); return; }
+      const cat = state.categories.find(c => c.name === oldName);
+      if (cat) cat.name = newName;
+      state.snippets.forEach(s => { if (s.cat === oldName) s.cat = newName; });
+      if (state.cat === oldName) state.cat = newName;
+      saveCategories();
+      saveSnippets();
+      renderSidebar();
+      renderList();
+    };
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter')  { e.preventDefault(); commit(); }
+      if (e.key === 'Escape') { committed = true; editingCat = null; renderSidebar(); }
+    });
+    input.addEventListener('blur', commit);
+  });
+
+  // Action button handlers (rename / delete)
+  nav.querySelectorAll('.cat-action-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const name   = btn.dataset.cat;
+      const action = btn.dataset.action;
+      if (action === 'rename') {
+        editingCat = name;
+        renderSidebar();
+      } else if (action === 'delete') {
+        const count = state.snippets.filter(s => s.cat === name).length;
+        const msg   = count > 0
+          ? `Kategorie "${name}" löschen? ${count} Snippet${count > 1 ? 's' : ''} bleiben erhalten und sind weiterhin unter "All" sichtbar.`
+          : `Kategorie "${name}" löschen?`;
+        showConfirm(msg, () => {
+          state.categories = state.categories.filter(c => c.name !== name);
+          if (state.cat === name) state.cat = 'all';
+          saveCategories();
+          renderSidebar();
+          renderList();
+        });
+      }
+    });
+  });
 }
 
 /* ── CATEGORY NAV ──────────────────────────────────────────── */
 els.catNav.addEventListener('click', e => {
+  if (e.target.closest('.cat-action-btn') || e.target.closest('.sidebar-item-edit')) return;
   const item = e.target.closest('.sidebar-item');
   if (!item) return;
   state.cat      = item.dataset.cat;
