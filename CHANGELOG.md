@@ -9,12 +9,40 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Planned
 
-**Medium**
-- Inline edit — edit code directly in the detail panel (contenteditable or CodeMirror CDN) instead of modal
-
 **Larger**
-- Drag & drop — reorder snippets and categories
+- Variablen-Platzhalter — `{{BUCHUNGSKREIS}}` in Code-Templates; Mini-Dialog beim Kopieren ersetzt Platzhalter
 - Browser extension — save a snippet directly from any webpage
+
+---
+
+## [0.21.0] — 2026-05-18
+
+### Fixed
+- **Category count color** — counts were using `--border` (nearly invisible in light mode); changed to `--text-muted` for readable display in both themes
+
+---
+
+## [0.20.0] — 2026-05-18
+
+### Added
+- **Hover preview** — hovering a snippet row (desktop only) shows a floating card to the right with syntax-highlighted code; 180ms delay prevents flickering; skipped for the already-selected snippet
+- **Inline code edit** — new ✎ button in the code block header replaces the `<pre>` with a textarea in-place; Save/Cancel without opening the modal; triggers Gist push on save
+- **Drag & drop reorder** — snippet rows are draggable in default sort mode; drop-target indicator line; disabled in Recent sort (timestamp-driven order)
+
+---
+
+## [0.19.0] — 2026-05-18
+
+### Added
+- **Rename category** — hover a category → ✎ button appears; inline input, confirmed on Enter/blur, updates all snippet `cat` fields automatically
+- **Delete category** — hover a category → × button appears; custom confirm dialog; snippets in the deleted category are preserved and remain visible under "All"
+
+---
+
+## [0.18.0] — 2026-05-18
+
+### Fixed
+- **Sidebar footer scrollable** — added `overflow-y: auto` to `.sidebar-footer` so the Gist Sync button is never clipped on short viewports
 
 ---
 

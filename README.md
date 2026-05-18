@@ -20,6 +20,10 @@ A personal code snippet manager — local-first, no backend, no build step. Sing
 - **Mobile view** — on screens ≤640px the snippet list fills the full width; tapping a snippet slides a bottom sheet up from below; swipe the handle down or tap the backdrop to dismiss; sidebar accessible via ☰ hamburger button
 - **localStorage persistence** — auto-saves on every mutation, survives reloads
 - **GitHub Gist Sync** — enter a GitHub PAT (gist scope) once; snippets and categories sync automatically across all devices via a private Gist; status indicator shows last sync time
+- **Hover preview** — hover a snippet row (desktop) to see a floating code preview with syntax highlighting
+- **Inline code edit** — ✎ button in the code block edits code directly in the detail panel without opening the modal
+- **Drag & drop reorder** — drag snippet rows to reorder (default sort only)
+- **Rename / delete categories** — hover a category to reveal ✎ and × actions; rename updates all snippets automatically
 - **JSON Export / Import** — portable backup, works across browsers and devices
 - **Clear all data** — wipes everything for a clean deploy
 
