@@ -719,6 +719,44 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
+.edit-inline-btn {
+  position: absolute;
+  top: 9px;
+  right: 78px;
+  font-size: 11px;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 7px;
+  background: var(--surface);
+  font-family: 'DM Mono', monospace;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.edit-inline-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+.inline-code-editor {
+  width: 100%;
+  min-height: 180px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: vertical;
+}
+
+.inline-edit-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
 .copy-btn {
   position: absolute;
   top: 9px;
@@ -920,6 +958,47 @@ code[class*="language-"] {
   white-space: pre-wrap !important;
   word-break: break-all !important;
 }
+
+/* ── HOVER PREVIEW ─────────────────────────────────────────── */
+#snippet-preview {
+  position: fixed;
+  z-index: 30;
+  width: 280px;
+  max-height: 280px;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow-md);
+  padding: 12px 14px;
+  pointer-events: none;
+}
+
+.preview-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.preview-code {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--text-mid);
+  white-space: pre-wrap;
+  word-break: break-all;
+  margin: 0;
+  overflow: hidden;
+  max-height: 220px;
+}
+
+/* ── DRAG & DROP ───────────────────────────────────────────── */
+.snip-row.dragging   { opacity: 0.35; }
+.snip-row.drop-target { border-top: 2px solid var(--accent); }
 
 /* ── KEYBOARD NAV ──────────────────────────────────────────── */
 .snip-row.kbd-focus {
