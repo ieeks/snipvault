@@ -308,7 +308,7 @@ body {
 .cat-count {
   font-family: 'DM Mono', monospace;
   font-size: 10px;
-  color: var(--border);
+  color: var(--text-muted);
   flex-shrink: 0;
 }
 
